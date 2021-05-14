@@ -10,3 +10,7 @@ import sys
 def test_montecarlo_imported():
     """Sample test, will always pass so long as import statement worked"""
     assert "montecarlo" in sys.modules
+
+
+def testa():
+    assert 1 == 1
