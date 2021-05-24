@@ -46,9 +46,72 @@ class SpinConfig1D(SpinConfig):
         for i in randomlist:
             self.config[i] = 1
 
-        print(self.config)
+        print(" Initialized config to: ", self.config)
 
+    def __getitem__(self,i):
+        return self.config[i]
 
+    def flip_site(self, i):
+        """
+        flip spin at site, i 
+        
+        Parameters
+        ----------
+        i   : int
+            site to flip 
+        """
+        if self.config[i] == 1:
+            self.config[i] = 0
+        else:
+            self.config[i] = 1
+        
+
+class IsingHamiltonian1D:
+    """
+    Class for 1D Hamiltonian
+        .. math::
+            H = -\sum_{\left<ij\right>} \sigma_i\sigma_j - \mu\sum_i\sigma_i
+    """
+    def __init__(self, J, h, mu, pbc=True):
+        self.J = J
+        self.h = h
+        self.mu = mu
+        self.pbc = pbc
+
+    def expectation_value(self, config):
+        """
+        Compute energy of configuration for the following Hamiltonian
+        .. math::
+            E = -\sum_{\left<ij\right>} \sigma_i\sigma_j - \mu\sum_i\sigma_i
+        
+        Parameters
+        ----------
+        config   : SpinConfig1D
+            input configuration 
+        
+        Returns
+        -------
+        energy  : float
+            Energy of the input configuration
+        """
+        e = 0.0
+        for i in range(config.N-1):
+            if config[i] == config[i+1]:
+                e -= self.J
+            else:
+                e += self.J
+        if self.pbc:
+            if config[config.N-1] == config[0]:
+                e -= self.J
+            else:
+                e += self.J
+        
+        for i in range(config.N):
+            if config[i]:
+                e -= self.mu * self.h[i]
+            else:
+                e += self.mu * self.h[i]
+        return e
 
 
 
