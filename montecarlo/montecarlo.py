@@ -14,7 +14,7 @@ class SpinConfig1D(SpinConfig):
     """
     1-D spin configuration
     """
-    def __init__(self,N=10,pbc=0):
+    def __init__(self, N=10, pbc=True):
         """
         Initialize instance
 
@@ -27,10 +27,10 @@ class SpinConfig1D(SpinConfig):
 
         Returns
         -------
-    """    
-    self.config = np.zeros(N, dtype=int)
-    self.N = N
-    self.pbc = pbc
+        """    
+        self.config = np.zeros(N, dtype=int)
+        self.N = N
+        self.pbc = pbc
 
     def initialize(self, M=0):
         """
@@ -41,12 +41,12 @@ class SpinConfig1D(SpinConfig):
         M   : Int, default: 0
             Total number of spin up sites 
         """
-        self.config = np.zeros(N, dtype=int) 
+        self.config = np.zeros(self.N, dtype=int) 
         randomlist = random.sample(range(0, self.N-1), M)
         for i in randomlist:
-            config[i] = 1
+            self.config[i] = 1
 
-        print(config)
+        print(self.config)
 
 
 

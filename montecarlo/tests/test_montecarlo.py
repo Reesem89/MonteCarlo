@@ -6,6 +6,7 @@ Unit and regression test for the montecarlo package.
 import montecarlo
 import pytest
 import sys
+import random
 
 def test_montecarlo_imported():
     """Sample test, will always pass so long as import statement worked"""
@@ -17,4 +18,14 @@ def testa():
 
 
 def test_classes():
-    conf = montecarlo.SpinConfig1D()
+    random.seed(2)
+    conf = montecarlo.SpinConfig1D(N=10)
+    conf.initialize(M=5)
+    assert(all(conf.config == [1, 1, 1, 0, 0, 0, 0, 1, 1, 0]))
+
+
+
+if __name__== "__main__":
+    test_montecarlo_imported()
+    test_classes()
+
