@@ -1,11 +1,75 @@
+import numpy as np
+import random
+
+class SpinConfig:
+    """
+    Base class for different types of spin configurations (i.e., 1D, 2D, etc)
+    """
+    def __init__(self):
+        print(" Why are you instantiating this?\n")
+
+
+
+class SpinConfig1D(SpinConfig):
+    """
+    1-D spin configuration
+    """
+    def __init__(self,N=10,pbc=0):
+        """
+        Initialize instance
+
+        Parameters
+        ----------
+        N   : Int, default: 10
+            Number of sites
+        pbc : bool, default: true
+            Should we use periodic boundary conditions?
+
+        Returns
+        -------
+    """    
+    self.config = np.zeros(N, dtype=int)
+    self.N = N
+    self.pbc = pbc
+
+    def initialize(self, M=0):
+        """
+        Initialize spin configuration with specified magnetization
+        
+        Parameters
+        ----------
+        M   : Int, default: 0
+            Total number of spin up sites 
+        """
+        self.config = np.zeros(N, dtype=int) 
+        randomlist = random.sample(range(0, self.N-1), M)
+        for i in randomlist:
+            config[i] = 1
+
+        print(config)
+
+
+
+
+
+class tmp:
+    """
+    test class
+    """
+    def __init__(self):
+        pass
+    def print(self,a):
+        """
+        print for tmp class
+        """
+        print(a)
+
 """
 montecarlo.py
 Introduction to the Monte Carlo method
 
 Handles the primary functions
 """
-
-
 def canvas2(with_attribution=True):
     """
     Placeholder function to show example docstring (NumPy format)

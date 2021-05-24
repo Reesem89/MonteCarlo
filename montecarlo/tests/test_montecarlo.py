@@ -14,3 +14,7 @@ def test_montecarlo_imported():
 
 def testa():
     assert 1 == 1
+
+
+def test_classes():
+    conf = montecarlo.SpinConfig1D()
