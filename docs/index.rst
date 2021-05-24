@@ -8,6 +8,9 @@ Welcome to MonteCarlo's documentation!
 
 =========================================================
 
+.. automodule:: montecarlo.montecarlo
+    :members:
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
