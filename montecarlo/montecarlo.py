@@ -70,7 +70,7 @@ class IsingHamiltonian1D:
     """
     Class for 1D Hamiltonian
         .. math::
-            H = -\sum_{\left<ij\right>} \sigma_i\sigma_j - \mu\sum_i\sigma_i
+            H = -\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j - \\mu\\sum_i\\sigma_i
     """
     def __init__(self, J, h, mu, pbc=True):
         self.J = J
@@ -82,7 +82,7 @@ class IsingHamiltonian1D:
         """
         Compute energy of configuration for the following Hamiltonian
         .. math::
-            E = -\sum_{\left<ij\right>} \sigma_i\sigma_j - \mu\sum_i\sigma_i
+            E = -\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j - \\mu\\sum_i\\sigma_i
         
         Parameters
         ----------
@@ -182,7 +182,7 @@ def testa():
     This is just a test to see if I can do LaTeX
 
     .. math::
-        \sum_{i=1}^{\\infty} x_{i}
+        \\sum_{i=1}^{\\infty} x_{i}
 
 
     Parammeters

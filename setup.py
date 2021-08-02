@@ -18,6 +18,9 @@ try:
 except:
     long_description = "\n".join(short_description[2:])
 
+# Read in requirements.txt
+requirements = open('requirements.txt').readlines()
+requirements = [r.strip() for r in requirements]
 
 setup(
     # Self-descriptive entries which should always be present
@@ -46,14 +49,5 @@ setup(
 
     # Additional entries you may want simply uncomment the lines you want and fill in the data
     # url='http://www.my_package.com',  # Website
-    install_requires=['numpy'],              # Required packages, pulls from pip if needed; do not use for Conda deployment
-    # platforms=['Linux',
-    #            'Mac OS-X',
-    #            'Unix',
-    #            'Windows'],            # Valid platforms your code works on, adjust to your flavor
-    # python_requires=">=3.5",          # Python version restrictions
-
-    # Manual control if final package is compressible or not, set False to prevent the .egg from being made
-    # zip_safe=False,
-
+    install_requires=requirements
 )
