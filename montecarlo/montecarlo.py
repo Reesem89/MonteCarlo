@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import copy as cp
 
 class SpinConfig:
     """
@@ -112,6 +113,16 @@ class IsingHamiltonian1D:
             else:
                 e += self.mu * self.h[i]
         return e
+
+    def delta_e_for_flip(self, i, config):
+
+        """
+        Compute the energy change incurred _if_ one were to flip the spin at site i
+        """
+        config_trial = cp.deepcopy(config) 
+        config_trial.flip_site(i)
+        return config_trial, self.expectation_value(config_trial) - self.expectation_value(config)
+
 
 
 
