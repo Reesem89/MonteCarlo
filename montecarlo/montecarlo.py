@@ -126,9 +126,19 @@ class IsingHamiltonian1D:
         return e
 
     def delta_e_for_flip(self, i, config):
+        """Compute the energy change incurred _if_ one were to flip the spin at site i
 
-        """
-        Compute the energy change incurred _if_ one were to flip the spin at site i
+        Parameters
+        ----------
+        i        : int
+            Index of site to flip
+        config   : SpinConfig1D
+            input configuration 
+        
+        Returns
+        -------
+        energy  : list[SpinConfig1D, float]
+            Returns both the flipped config and the energy change
         """
         config_trial = cp.deepcopy(config) 
         config_trial.flip_site(i)
