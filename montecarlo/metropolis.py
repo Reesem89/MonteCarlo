@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import copy as cp
 
 random.seed(2)
-N = 100
+N = 10
 conf = montecarlo.SpinConfig1D(N=N)
 conf.initialize(M=5)
 ham = montecarlo.IsingHamiltonian1D(1.0, [.1 for i in range(N)], 1.01)
@@ -16,7 +16,7 @@ ham = montecarlo.IsingHamiltonian1D(1.0, [.1 for i in range(N)], 1.01)
 nS = 100000
 Z = 0.0
 E = 0.0
-T = 2.1
+T = .1
 Eavg = np.zeros(nS)
 Eseries = np.zeros(nS)
 Zseries = np.zeros(nS)
