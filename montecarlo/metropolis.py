@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import copy as cp
 
 random.seed(2)
-N = 10
+N = 20
 conf = montecarlo.SpinConfig1D(N=N)
 conf.initialize(M=5)
 ham = montecarlo.IsingHamiltonian1D(1.0, [.1 for i in range(N)], 1.01)
 
-nS = 100000
+nS = 10000
 Z = 0.0
 E = 0.0
 T = .1

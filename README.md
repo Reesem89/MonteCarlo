@@ -6,7 +6,11 @@ MonteCarlo
 [![codecov](https://codecov.io/gh/CHEM-PHYS-X684/MonteCarlo/branch/master/graph/badge.svg)](https://codecov.io/gh/CHEM-PHYS-X684/MonteCarlo/branch/master)
 
 
-Introduction to the Monte Carlo method
+# Introduction to the Monte Carlo method
+
+Start by defining the Gibbs distribution:
+$$P(\alpha) = e^{-E(\alpha)/kT}$$
+this 
 
 ### Copyright
 
@@ -17,3 +21,5 @@ Copyright (c) 2021, Nick Mayhall
  
 Project based on the 
 [Computational Molecular Science Python Cookiecutter](https://github.com/molssi/cookiecutter-cms) version 1.5.
+
+Metropolis referenced from: [here](https://arxiv.org/pdf/0803.0217.pdf)

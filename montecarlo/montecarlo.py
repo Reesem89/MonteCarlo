@@ -73,18 +73,22 @@ class IsingHamiltonian1D:
         .. math::
             H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j - \\mu\\sum_i h_i \\sigma_i
 
-    Parameters
-    ----------
-    J: float, required
-        Strength of coupling
-    h: list[float], required
-        Strength of onsite field 
-    mu: float, required
-        Chemical potential 
-    pbc: bool, optional, default=true
-        Do PBC?
     """
+
     def __init__(self, J, h, mu, pbc=True):
+        """ Constructor 
+    
+        Parameters
+        ----------
+        J: float, required
+            Strength of coupling
+        h: list[float], required
+            Strength of onsite field 
+        mu: float, required
+            Chemical potential 
+        pbc: bool, optional, default=true
+            Do PBC?
+        """
         self.J = J
         self.h = h
         self.mu = mu
@@ -126,13 +130,13 @@ class IsingHamiltonian1D:
         return e
 
     def delta_e_for_flip(self, i, config):
-        """Compute the energy change incurred _if_ one were to flip the spin at site i
+        """Compute the energy change incurred if one were to flip the spin at site i
 
         Parameters
         ----------
         i        : int
             Index of site to flip
-        config   : SpinConfig1D
+        config   : :class:`SpinConfig1D`
             input configuration 
         
         Returns
@@ -146,70 +150,7 @@ class IsingHamiltonian1D:
 
 
 
-
-class tmp:
-    """
-    test class
-    """
-    def __init__(self):
-        pass
-    def print(self,a):
-        """
-        print for tmp class
-        """
-        print(a)
-
-"""
-montecarlo.py
-Introduction to the Monte Carlo method
-
-Handles the primary functions
-"""
-def canvas2(with_attribution=True):
-    """
-    Placeholder function to show example docstring (NumPy format)
-
-    Replace this function and doc string for your own project
-
-    Parameters
-    ----------
-    with_attribution : bool, Optional, default: True
-        Set whether or not to display who the quote is from
-
-    Returns
-    -------
-    quote : str
-        Compiled string including quote and optional attribution
-    """
-
-    quote = "The code is but a canvas to our imagination."
-    if with_attribution:
-        quote += "\n\t- Adapted from Henry David Thoreau"
-    return quote
-
 def canvas(with_attribution=True):
-    """
-    Placeholder function to show example docstring (NumPy format)
-
-    Replace this function and doc string for your own project
-
-    Parameters
-    ----------
-    with_attribution : bool, Optional, default: True
-        Set whether or not to display who the quote is from
-
-    Returns
-    -------
-    quote : str
-        Compiled string including quote and optional attribution
-    """
-
-    quote = "The code is but a canvas to our imagination."
-    if with_attribution:
-        quote += "\n\t- Adapted from Henry David Thoreau"
-    return quote
-
-def testa():
     """This is a conceptual class representation of a simple BLE device
     (GATT Server). It is essentially an extended combination of the
     :class:`bluepy.btle.Peripheral` and :class:`bluepy.btle.ScanEntry` classes
@@ -242,7 +183,12 @@ def testa():
         received from the device so far, defaults to 0
     :type updateCount: int, optional
     """
-    print(" testa\n")
+
+    quote = "The code is but a canvas to our imagination."
+    if with_attribution:
+        quote += "\n\t- Adapted from Henry David Thoreau"
+    return quote
+
 
 
 if __name__ == "__main__":
