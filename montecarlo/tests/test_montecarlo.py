@@ -24,7 +24,7 @@ def test_classes():
     conf.initialize(M=5)
     assert(all(conf.config == [1, 1, 1, 0, 0, 0, 0, 1, 1, 0]))
 
-    ham = montecarlo.IsingHamiltonian1D(1.0, [.1 for i in range(10)], .01)
+    ham = montecarlo.IsingHamiltonian1D(1.0, .0000001)
 
     e = ham.expectation_value(conf)
     print(" Energy = ", e)

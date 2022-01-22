@@ -33,7 +33,7 @@ class SpinConfig1D(SpinConfig):
         self.N = N
         self.pbc = pbc
 
-    def initialize(self, M=0):
+    def initialize(self, M=0, seed=2):
         """
         Initialize spin configuration with specified magnetization
         
@@ -42,6 +42,7 @@ class SpinConfig1D(SpinConfig):
         M   : Int, default: 0
             Total number of spin up sites 
         """
+        random.seed(seed)
         self.config = np.zeros(self.N, dtype=int) 
         randomlist = random.sample(range(0, self.N-1), M)
         for i in randomlist:
@@ -65,32 +66,28 @@ class SpinConfig1D(SpinConfig):
             self.config[i] = 0
         else:
             self.config[i] = 1
-        
 
 class IsingHamiltonian1D:
     """Class for 1D Hamiltonian
         
         .. math::
-            H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j - \\mu\\sum_i h_i \\sigma_i
+            H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j - \\mu\\sigma_i
 
     """
 
-    def __init__(self, J, h, mu, pbc=True):
+    def __init__(self, J, mu, pbc=True):
         """ Constructor 
     
         Parameters
         ----------
         J: float, required
             Strength of coupling
-        h: list[float], required
-            Strength of onsite field 
         mu: float, required
             Chemical potential 
         pbc: bool, optional, default=true
             Do PBC?
         """
         self.J = J
-        self.h = h
         self.mu = mu
         self.pbc = pbc
 
@@ -121,12 +118,9 @@ class IsingHamiltonian1D:
                 e -= self.J
             else:
                 e += self.J
+       
+        e += self.mu * (2*np.sum(config.config)-1)
         
-        for i in range(config.N):
-            if config[i]:
-                e -= self.mu * self.h[i]
-            else:
-                e += self.mu * self.h[i]
         return e
 
     def delta_e_for_flip(self, i, config):
