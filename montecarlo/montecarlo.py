@@ -119,7 +119,7 @@ class IsingHamiltonian1D:
             else:
                 e += self.J
        
-        e += self.mu * (2*np.sum(config.config)-1)
+        e -= self.mu * (np.sum(2*config.config-1))
         
         return e
 
