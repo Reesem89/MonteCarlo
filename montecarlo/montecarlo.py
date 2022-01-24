@@ -33,6 +33,13 @@ class SpinConfig1D(SpinConfig):
         self.N = N
         self.pbc = pbc
 
+    def __repr__(self):
+        print(self.config)
+        
+    
+    def __str__(self):
+        return "".join(str(e) for e in self.config)
+        
     def initialize(self, M=0, seed=2):
         """
         Initialize spin configuration with specified magnetization
@@ -48,6 +55,7 @@ class SpinConfig1D(SpinConfig):
         for i in randomlist:
             self.config[i] = 1
 
+        self.n_dim = 2**self.N
         print(" Initialized config to: ", self.config)
 
     def __getitem__(self,i):
@@ -61,12 +69,71 @@ class SpinConfig1D(SpinConfig):
         ----------
         i   : int
             site to flip 
+            
+        Returns
+        -------
         """
         if self.config[i] == 1:
             self.config[i] = 0
         else:
             self.config[i] = 1
 
+    def get_rand_config(self):
+        """
+        get random configuration 
+        
+        Parameters
+        ----------
+        
+        Returns
+        -------
+        config : list[int]
+            random bitstring
+        """
+        return np.array([int(i) for i in np.binary_repr(random.randrange(0,self.n_dim), width=self.N)])
+    
+    def set_rand_config(self):
+        """
+        set configuration to a random configuration 
+        
+        Parameters
+        ----------
+        
+        Returns
+        -------
+        """
+        self.config = np.array([int(i) for i in np.binary_repr(random.randrange(0,self.n_dim), width=self.N)])   
+    
+    def set_int_config(self, int_index):
+        """
+        set configuration to bitstring of `int`
+        
+        Parameters
+        ----------
+        int_index : int, required
+            integer whose bit representation corresponds to desired spin configuration
+        
+        Returns
+        -------
+        """
+        self.config = np.array([int(i) for i in np.binary_repr(int_index, width=self.N)])
+        
+    def get_magnetization(self):
+        """
+        Return net magnetization of current configuration 
+        
+        Parameters
+        ----------
+        
+        Returns
+        -------
+        m : float
+            magnetization
+        """
+        return np.sum(2*self.config-1)
+        
+        
+        
 class IsingHamiltonian1D:
     """Class for 1D Hamiltonian
         
@@ -119,7 +186,7 @@ class IsingHamiltonian1D:
             else:
                 e += self.J
        
-        e -= self.mu * (np.sum(2*config.config-1))
+        e -= self.mu * config.get_magnetization()
         
         return e
 
