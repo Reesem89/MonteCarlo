@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.testing import assert_almost_equal
 import random
 import copy as cp
 
@@ -51,7 +52,7 @@ class SpinConfig1D(SpinConfig):
         """
         random.seed(seed)
         self.config = np.zeros(self.N, dtype=int) 
-        randomlist = random.sample(range(0, self.N-1), M)
+        randomlist = random.sample(range(0, self.N), M)
         for i in randomlist:
             self.config[i] = 1
 
@@ -207,7 +208,27 @@ class IsingHamiltonian1D:
         """
         config_trial = cp.deepcopy(config) 
         config_trial.flip_site(i)
+        
+#         del_e = 0.0
+        
+#         # assume PBC
+#         iright = (i+1)%config.N
+#         ileft  = (i-1)%config.N
+#         if config.config[ileft] == config.config[iright]:
+#             if config.config[ileft] == config.config[i]:
+#                 del_e = 4.0*self.J
+#             else:
+#                 del_e = -4.0*self.J
+                
+#         del_e += 2*self.mu * (2*config.config[i]-1)
+
+        # print("check")
+        # print(del_e)
+        # print(self.expectation_value(config_trial) - self.expectation_value(config))
+#         assert_almost_equal(del_e, self.expectation_value(config_trial) - self.expectation_value(config)) # make this a test
+        
         return config_trial, self.expectation_value(config_trial) - self.expectation_value(config)
+        # return config_trial, del_e
 
 
 
