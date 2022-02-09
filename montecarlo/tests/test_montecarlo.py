@@ -8,6 +8,7 @@ import pytest
 import sys
 import random
 import numpy as np
+import copy as cp
 
 def test_montecarlo_imported():
     """Sample test, will always pass so long as import statement worked"""
@@ -43,6 +44,24 @@ def test_classes():
     print(" Energy = ", e)
     assert(np.isclose(e,-2.00))
 
+    ham.mu = 1.1
+    conf_old = cp.deepcopy(conf)
+    ham.metropolis_sweep(conf, T=.9)
+    print(conf_old, " --> ", conf)
+    print("Energy: %12.8f --> %12.8f" %(e, ham.expectation_value(conf)))  
+    assert(all(conf.config == np.ones(10)))
+    
+    ham.mu = 0.1
+    ham.J  = -1.0
+    conf.set_rand_config()
+    print(conf)
+    conf_old = cp.deepcopy(conf)
+    ham.metropolis_sweep(conf, T=.9)
+    print(conf_old, " --> ", conf)
+    print("Energy: %12.8f --> %12.8f" %(e, ham.expectation_value(conf)))  
+    assert(all(conf.config == [0,1,1,1,0,1,1,0,0,1]))
+    
+    
 if __name__== "__main__":
     test_montecarlo_imported()
     test_classes()
