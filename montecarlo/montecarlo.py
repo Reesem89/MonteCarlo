@@ -33,6 +33,7 @@ class SpinConfig1D(SpinConfig):
         self.config = np.zeros(N, dtype=int)
         self.N = N
         self.pbc = pbc
+        self.n_dim = 2**self.N
 
     def __repr__(self):
         print(self.config)
@@ -41,7 +42,7 @@ class SpinConfig1D(SpinConfig):
     def __str__(self):
         return "".join(str(e) for e in self.config)
         
-    def initialize(self, M=0, seed=2):
+    def initialize(self, M=0, verbose=0):
         """
         Initialize spin configuration with specified magnetization
         
@@ -50,14 +51,11 @@ class SpinConfig1D(SpinConfig):
         M   : Int, default: 0
             Total number of spin up sites 
         """
-        random.seed(seed)
         self.config = np.zeros(self.N, dtype=int) 
         randomlist = random.sample(range(0, self.N), M)
         for i in randomlist:
             self.config[i] = 1
 
-        self.n_dim = 2**self.N
-        print(" Initialized config to: ", self.config)
 
     def __getitem__(self,i):
         return self.config[i]
@@ -93,19 +91,16 @@ class SpinConfig1D(SpinConfig):
         """
         return np.array([int(i) for i in np.binary_repr(random.randrange(0,self.n_dim), width=self.N)])
     
-    def set_rand_config(self, seed=1):
+    def set_rand_config(self):
         """
         set configuration to a random configuration 
         
         Parameters
         ----------
-        seed : int
-            seed for random numbers
             
         Returns
         -------
         """
-        random.seed(seed)
         self.config = np.array([int(i) for i in np.binary_repr(random.randrange(0,self.n_dim), width=self.N)])   
     
     def set_int_config(self, int_index):
@@ -135,7 +130,23 @@ class SpinConfig1D(SpinConfig):
             magnetization
         """
         return np.sum(2*self.config-1)
+    
+    def set_config(self, conf):
+        """
+        set configuration that specified from `conf`
         
+        Parameters
+        ----------
+        conf : [int], required
+            list of 1/0 specifying desired spin configuration
+        
+        Returns
+        -------
+        """
+        assert(len(conf) == self.N)
+        self.config = np.array(conf)
+        
+
         
         
 class IsingHamiltonian1D:
@@ -146,14 +157,14 @@ class IsingHamiltonian1D:
 
     """
 
-    def __init__(self, J, mu, pbc=True):
+    def __init__(self, J=1.0, mu=0.0, pbc=True):
         """ Constructor 
     
         Parameters
         ----------
-        J: float, required
+        J: float, optional
             Strength of coupling
-        mu: float, required
+        mu: float, optional
             Chemical potential 
         pbc: bool, optional, default=true
             Do PBC?
@@ -212,30 +223,46 @@ class IsingHamiltonian1D:
         config_trial = cp.deepcopy(config) 
         config_trial.flip_site(i)
         
-#         del_e = 0.0
         
-#         # assume PBC
-#         iright = (i+1)%config.N
-#         ileft  = (i-1)%config.N
-#         if config.config[ileft] == config.config[iright]:
-#             if config.config[ileft] == config.config[i]:
-#                 del_e = 4.0*self.J
-#             else:
-#                 del_e = -4.0*self.J
+        del_e = 0.0
+        
+        # assume PBC
+        iright = (i+1)%config.N
+        ileft  = (i-1)%config.N
+        if config.config[ileft] == config.config[iright]:
+            if config.config[ileft] == config.config[i]:
+                del_e = 4.0*self.J
+            else:
+                del_e = -4.0*self.J
                 
-#         del_e += 2*self.mu * (2*config.config[i]-1)
+        del_e += 2*self.mu * (2*config.config[i]-1)
 
-        # print("check")
-        # print(del_e)
-        # print(self.expectation_value(config_trial) - self.expectation_value(config))
-#         assert_almost_equal(del_e, self.expectation_value(config_trial) - self.expectation_value(config)) # make this a test
+
+        return config_trial, del_e
+    
+    def delta_e_for_flip_slow(self, i, config):
+        """Compute the energy change incurred if one were to flip the spin at site i (slow)
+
+        Parameters
+        ----------
+        i        : int
+            Index of site to flip
+        config   : :class:`SpinConfig1D`
+            input configuration 
+        
+        Returns
+        -------
+        energy  : list[SpinConfig1D, float]
+            Returns both the flipped config and the energy change
+        """
+        config_trial = cp.deepcopy(config) 
+        config_trial.flip_site(i)
         
         return config_trial, self.expectation_value(config_trial) - self.expectation_value(config)
-        # return config_trial, del_e
 
 
         
-    def metropolis_sweep(self,conf, T=1.0, seed=1):
+    def metropolis_sweep(self, conf, T=1.0):
         """Perform a single sweep through all the sites and return updated configuration
 
         Parameters
@@ -244,8 +271,6 @@ class IsingHamiltonian1D:
             input configuration 
         T      : int
             Temperature
-        seed   : int
-            seed for random numbers
         
         Returns
         -------
@@ -253,10 +278,8 @@ class IsingHamiltonian1D:
             Returns updated config
         """
 
-        random.seed(seed)
-        
         for site_i in range(conf.N):
-        
+       
             # new_conf, delta_e = ham.delta_e_for_flip(site_i, conf)      
             delta_e = 0.0
         
@@ -278,13 +301,13 @@ class IsingHamiltonian1D:
                 rand_comp = random.random()
                 if rand_comp > np.exp(-delta_e/T):
                     accept = False
-                # print("nick: %12.8f %12.8f %12s" %(rand_comp, np.exp(-delta_e/T), accept))
+                #print("nick: %12.8f %12.8f %12s" %(rand_comp, np.exp(-delta_e/T), accept))
             if accept:
                 if conf.config[site_i] == 0:
                     conf.config[site_i] = 1
                 else:
                     conf.config[site_i] = 0
-            # print("%12s %12s %12.8f %12.8f" %(conf, accept, delta_e, np.exp(-delta_e/T)))
+            #print("%12s %12s deltaE = %12.8f prob = %12.8f" %(conf, accept, delta_e, np.exp(-delta_e/T)))
         return conf
 
 
