@@ -6,6 +6,8 @@ Introduction to the Monte Carlo method
 # Add imports here
 from .montecarlo import *
 from .metropolis import *
+from .spin_config import *
+from .ising_hamiltonian import *
 
 
 # Handle versioneer
