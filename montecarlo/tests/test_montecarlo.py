@@ -25,22 +25,22 @@ def test_classes():
     conf.initialize(M=5)
     assert(all(conf.config == [1, 1, 1, 0, 0, 0, 0, 1, 1, 0]))
 
-    ham = montecarlo.IsingHamiltonian1D(1.0, .001)
+    ham = montecarlo.IsingHamiltonian1D(1.0, -.001)
 
-    e = ham.expectation_value(conf)
+    e = ham.energy(conf)
     print(" Energy = ", e)
     assert(np.isclose(e,-2))
 
     conf.flip_site(3)
     print(conf.config)
-    e = ham.expectation_value(conf)
+    e = ham.energy(conf)
     print(" Energy = ", e)
     assert(np.isclose(e,-2.002))
     
     # now flip back
     conf.flip_site(3)
     print(conf.config)
-    e = ham.expectation_value(conf)
+    e = ham.energy(conf)
     print(" Energy = ", e)
     assert(np.isclose(e,-2.00))
 
@@ -48,18 +48,18 @@ def test_classes():
     conf_old = cp.deepcopy(conf)
     ham.metropolis_sweep(conf, T=.9)
     print(conf_old, " --> ", conf)
-    print("Energy: %12.8f --> %12.8f" %(e, ham.expectation_value(conf)))  
+    print("Energy: %12.8f --> %12.8f" %(e, ham.energy(conf)))  
     assert(all(conf.config == np.ones(10)))
     
-    ham.mu = 0.1
+    ham.mu = -0.1
     ham.J  = -1.0
-    conf.set_rand_config()
-    print(conf)
+    random.seed(2)
+    conf.set_int_config(44)
     conf_old = cp.deepcopy(conf)
     ham.metropolis_sweep(conf, T=.9)
     print(conf_old, " --> ", conf)
-    print("Energy: %12.8f --> %12.8f" %(e, ham.expectation_value(conf)))  
-    assert(all(conf.config == [0,1,1,1,0,1,1,0,0,1]))
+    print("Energy: %12.8f --> %12.8f" %(e, ham.energy(conf)))  
+    assert(all(conf.config == [1,0,1,0,1,0,0,1,1,0]))
     
     
 if __name__== "__main__":
