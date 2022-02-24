@@ -8,7 +8,7 @@ class IsingHamiltonian1D:
     """Class for 1D Hamiltonian
         
         .. math::
-            H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j + \\mu\\sigma_i
+            H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j + \\mu\\sum_i\\sigma_i
 
     """
 
@@ -167,6 +167,26 @@ class IsingHamiltonian1D:
 
     
     def compute_average_values(self, conf, T):
+        """ Compute Average values exactly
+
+        Parameters
+        ----------
+        conf   : :class:`SpinConfig1D`
+            input configuration 
+        T      : int
+            Temperature
+        
+        Returns
+        -------
+        E  : float 
+            Energy
+        M  : float
+            Magnetization
+        HC : float
+            Heat Capacity
+        MS : float
+            Magnetic Susceptability
+        """
         E  = 0.0
         M  = 0.0
         Z  = 0.0
