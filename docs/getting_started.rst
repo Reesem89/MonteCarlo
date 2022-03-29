@@ -56,24 +56,30 @@ This means that to obtain any average value (also known as an `expectation value
 
 Sampling
 `````````````
-These calculation pose a drastic problem from a practical perspective.
+These exact calculations pose a drastic problem from a practical perspective.
 As `N` becomes large it is evident that
 computations become a daunting task if calculated in this manner.
 Thus a better numerical alternative would be to use a simulation to generate data over
 the ‘representative states’.
 Because each computed value of a configuration gets weighted by it's probability, very high energy states (which have negligible probabilities due to the Boltzmann distribution) will not contribute to the overall sum.
+What we'd like to do instead, is to sample over *only* those configurations that actively contribute.
 This is a form of biased sampling which
 essentially boils down to satisfying the following condition where
-`generated frequency` = `actual probability`.
+**generated frequency = actual probability**.
 
-An expectation value of any quantity, `A`, computed (using the Canonical Ensemble) can also be defined as:
+An expectation value of any quantity, `A`, computed (using the Canonical Ensemble) can be defined as:
 
 :math:`\left<A\right> = \frac{1}{Z}\int e^{-E(\alpha)/T}A(\alpha)d\alpha`,
 
 where `Z` is referred to as the `partition function`, and is essentially a normalization constant:
-:math:`Z = \int e^{-E(\alpha)/T}d\alpha`, and
-:math:`P(\alpha) = \frac{1}{Z}e^{-E(\alpha)/T}`.
-This probability gives the actual statistical weight with which the configuration
+
+:math:`Z = \int e^{-E(\alpha)/T}d\alpha`, 
+
+and
+
+:math:`P(\alpha) = \frac{1}{Z}e^{-E(\alpha)/T}`,
+
+gives the actual statistical weight with which the configuration
 :math:`\alpha` occurs in the thermal equilibrium. We now want to consider the discrete case
 of the formal definitions above. If we are to consider a finite portion of the
 configuration space it would produces an average of the form:
@@ -81,6 +87,42 @@ configuration space it would produces an average of the form:
 :math:`\left<A\right> = \frac{\displaystyle\sum_\alpha e^{-E'(\alpha)/T}A(\alpha)}{\displaystyle\sum_\alpha e^{-E'(\alpha)/T}}`
 
 We could choose to randomly `sample` from this full set of configurations, but this will not converge quickly.
+By randomly sampling, we simply mean to pick a configuration, :math:`\alpha`, at random, where all configurations have equal probability of being selected. 
+However, what if we *knew* a priori what the equilibrium probability distribution was?
+Then we could select configurations not randomly, but rather where a given configurations probability of being selected was proportional to its equilibrium population, 
+:math:`\frac{1}{Z}e^{-E(\alpha)/T}`.
+If each configuration had the thermodynamic probability of being sampled, then our average value would reduce to a simple arithmetic average over the samples:
+
+:math:`\displaystyle \left<A\right> = \frac{1}{M} \sum_\alpha A(\alpha)`.
+
+How can we carry out this fancy, biased sampling? - Markov process!
+We will *walk* randomly through configuration space. 
+Each configuration that we visit we will compute properties that contribute to our average values. 
+From each we visit, we will consider a new randomly chosen configuration and decide whether or not to visit that new configuration.
+The rules we use to determine whether or not to visit a new configuration will be chosen to guarantee that the number of times we visit a 
+configuration is exactly proportional to the equilibrium population of that configuration! 
+
+The choice to visit a new configuration will be made probabilistically. 
+Assume we are currently visiting configuration :math:`\alpha`. 
+We select configuration :math:`\beta` at random, and want to decide whether or not to visit :math:`beta`. 
+If the :math:`\beta` is lower in energy than :math:`\alpha`, then we will visit the new configuration with 100% probability, :math:`W(\alpha\rightarrow\beta)=1`. 
+If the :math:`\beta` is *higher* in energy, then we will visit the new configuration with a probability given by, 
+
+:math:`W(\alpha\rightarrow\beta)=e^{-\left(E(\beta)-E(\alpha)\right)/T}`.
+
+This seems simple, but it's quite powerful! We want to use this to make our simulations much faster, at the cost of some statistical noise. 
+
+#. Initialize configuration, :math:`\alpha`
+#. Loop over Monte Carlo steps
+
+        #. Loop over sites, `i`
+
+                #. Propose new configuration, :math:`\beta`, by flipping site, `i`. 
+                #. Compute flipping probability, :math:`W(\alpha\rightarrow\beta)`. If a randomly chosen number between 0 and 1 is less than :math:`W(\alpha\rightarrow\beta)`, then visit :math:`\beta`
+                #. Update :math:`\alpha` to :math:`\beta`
+
+        #. Update average values with updated :math:`\alpha`
+
 
 Examples
 -----------
