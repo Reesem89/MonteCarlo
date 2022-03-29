@@ -21,7 +21,7 @@ def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
     
     # accumulation
     ham.metropolis_sweep(conf, T=T)
-    Ei = ham.expectation_value(conf)
+    Ei = ham.energy(conf)
     Mi = conf.get_magnetization()
     M_samples[0]  = Mi 
     E_samples[0]  = Ei
@@ -29,7 +29,7 @@ def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
     EE_samples[0]  = Ei*Ei
     for si in range(1,nsweep):
         ham.metropolis_sweep(conf, T=T)
-        Ei = ham.expectation_value(conf)
+        Ei = ham.energy(conf)
         Mi = conf.get_magnetization()
         
         #E_samples[si]  = Ei 
