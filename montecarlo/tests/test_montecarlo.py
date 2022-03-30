@@ -18,6 +18,19 @@ def test_montecarlo_imported():
 def testa():
     assert 1 == 1
 
+def test_average_values():
+    N=10
+    conf = montecarlo.SpinConfig1D(N=N)
+    #conf.initialize(M=20)
+    ham = montecarlo.IsingHamiltonian1D(J=-1.0, mu=0.1)
+
+    T = 2.0
+    E, M, HC, MS = ham.compute_average_values(conf, T) 
+    assert(np.isclose(E, -4.6378514858094695))
+    assert(np.isclose(M, -0.1838233606011354 ))
+    assert(np.isclose(HC, 1.9883833749653714 ))
+    assert(np.isclose(MS, 1.8391722085614428))
+     
 
 def test_classes():
     random.seed(2)
@@ -65,4 +78,5 @@ def test_classes():
 if __name__== "__main__":
     test_montecarlo_imported()
     test_classes()
+    test_average_values()
 
