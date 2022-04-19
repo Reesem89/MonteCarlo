@@ -146,3 +146,12 @@ class SpinConfig1D(SpinConfig):
         assert(len(conf) == self.N)
         self.config = np.array(conf)
         
+    def x_gate(self, i):
+        self.flip_site(i)
+
+    def and_gate(self, conf):
+        out = cp.deepcopy(conf)
+        for i in range(len(self.config)):
+            out.config[i] = int(self.config[i] == 1 & conf.config[i] == 1)
+        return out
+
