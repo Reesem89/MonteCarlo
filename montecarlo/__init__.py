@@ -8,6 +8,7 @@ from .montecarlo import *
 from .metropolis import *
 from .spin_config import *
 from .ising_hamiltonian import *
+from .ising_hamiltonian_nd import *
 
 
 # Handle versioneer
