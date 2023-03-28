@@ -1,32 +1,76 @@
+from numba import jit
+
 import numpy as np
 from numpy.testing import assert_almost_equal
 import random
 import copy as cp
-        
-        
-class IsingHamiltonian1D:
-    """Class for 1D Hamiltonian
+import montecarlo 
+from operator import itemgetter
+
+
+@jit(nopython=True)
+def delta_e_for_flip_fast(i, config, nodes, J, mu):
+    """Compute the energy change incurred if one were to flip the spin at site i
+
+    Parameters
+    ----------
+    i        : int
+        Index of site to flip
+    config   : list of 0's and 1's 
+    
+    Returns
+    -------
+    energy  : float
+        Returns the energy change
+    """
+    
+    del_e = 0.0
+    del_si = 2
+    if config[i] == 1:
+        del_si = -2
+
+    for jidx, j in enumerate(nodes):
+        del_e += (2.0*config[j]-1.0) * J[jidx] * del_si
+
+    del_e += mu[i] * del_si 
+    return del_e
+
+
+
+
+class IsingHamiltonian:
+    """Class for an Ising Hamiltonian of arbitrary dimensionality
         
         .. math::
-            H = -J\\sum_{\\left<ij\\right>} \\sigma_i\\sigma_j + \\mu\\sum_i\\sigma_i
+            H = \\sum_{\\left<ij\\right>} J_{ij}\\sigma_i\\sigma_j + \\sum_i\\mu_i\\sigma_i
 
     """
 
-    def __init__(self, J=1.0, mu=0.0, pbc=True):
+    def __init__(self, J=[[()]], mu=np.zeros(1)):
         """ Constructor 
     
         Parameters
         ----------
-        J: float, optional
-            Strength of coupling
-        mu: float, optional
-            Chemical potential 
-        pbc: bool, optional, default=true
-            Do PBC?
+        J: list of lists of tuples, optional
+            Strength of coupling, e.g, 
+            [(4, -1.1), (6, -.1)]
+            [(5, -1.1), (7, -.1)]
+        mu: vector, optional
+            local fields 
         """
         self.J = J
         self.mu = mu
-        self.pbc = pbc
+    
+        self.nodes = []
+        self.js = []
+ 
+        for i in range(len(self.J)):
+            self.nodes.append(np.zeros(len(self.J[i]), dtype=int))
+            self.js.append(np.zeros(len(self.J[i])))
+            for jidx,j in enumerate(self.J[i]):
+                self.nodes[i][jidx] = j[0]
+                self.js[i][jidx] = j[1]
+        self.mu = np.array([i for i in self.mu])
 
     def energy(self, config):
         """Compute energy of configuration, `config` 
@@ -36,7 +80,7 @@ class IsingHamiltonian1D:
 
         Parameters
         ----------
-        config   : SpinConfig1D
+        config   : BitString
             input configuration 
         
         Returns
@@ -44,23 +88,26 @@ class IsingHamiltonian1D:
         energy  : float
             Energy of the input configuration
         """
+        if len(config.config) != len(self.J):
+            error("wrong dimension")
+            
         e = 0.0
-        for i in range(config.N-1):
-            if config[i] == config[i+1]:
-                e -= self.J
-            else:
-                e += self.J
-        if self.pbc:
-            if config[config.N-1] == config[0]:
-                e -= self.J
-            else:
-                e += self.J
+        for i in range(config.N):
+            #print()
+            #print(i)
+            for j in self.J[i]:
+                if j[0] < i:
+                    continue
+                #print(j)
+                if config[i] == config[j[0]]:
+                    e += j[1]
+                else:
+                    e -= j[1]
        
-        e += self.mu * np.sum(2*config.config-1)
-        #e += self.mu * config.get_magnetization()
+        e += np.dot(self.mu, 2*config.config-1)
         
         return e
-
+    
     def delta_e_for_flip(self, i, config):
         """Compute the energy change incurred if one were to flip the spin at site i
 
@@ -68,34 +115,27 @@ class IsingHamiltonian1D:
         ----------
         i        : int
             Index of site to flip
-        config   : :class:`SpinConfig1D`
+        config   : :class:`BitString`
             input configuration 
         
         Returns
         -------
-        energy  : list[SpinConfig1D, float]
+        energy  : list[BitString, float]
             Returns both the flipped config and the energy change
         """
-        config_trial = cp.deepcopy(config) 
-        config_trial.flip_site(i)
-        
         
         del_e = 0.0
-        
-        # assume PBC
-        iright = (i+1)%config.N
-        ileft  = (i-1)%config.N
-        if config.config[ileft] == config.config[iright]:
-            if config.config[ileft] == config.config[i]:
-                del_e = 4.0*self.J
-            else:
-                del_e = -4.0*self.J
-                
-        del_e += 2*self.mu * (2*config.config[i]-1)
+        del_si = 2
+        if config.config[i] == 1:
+            del_si = -2
 
+        for j in self.J[i]:
+            #if config.config[i] == config.config[j[0]]:
+            del_e += (2.0*config.config[j[0]]-1.0) * j[1] * del_si
 
-        return config_trial, del_e
-    
+        del_e += self.mu[i] * del_si 
+        return del_e
+
     def delta_e_for_flip_slow(self, i, config):
         """Compute the energy change incurred if one were to flip the spin at site i (slow)
 
@@ -103,18 +143,18 @@ class IsingHamiltonian1D:
         ----------
         i        : int
             Index of site to flip
-        config   : :class:`SpinConfig1D`
+        config   : :class:`BitString`
             input configuration 
         
         Returns
         -------
-        energy  : list[SpinConfig1D, float]
+        energy  : list[BitString, float]
             Returns both the flipped config and the energy change
         """
         config_trial = cp.deepcopy(config) 
         config_trial.flip_site(i)
         
-        return config_trial, self.expectation_value(config_trial) - self.expectation_value(config)
+        return self.energy(config_trial) - self.energy(config)
 
 
         
@@ -123,32 +163,31 @@ class IsingHamiltonian1D:
 
         Parameters
         ----------
-        conf   : :class:`SpinConfig1D`
+        conf   : :class:`BitString`
             input configuration 
         T      : int
             Temperature
         
         Returns
         -------
-        conf  : :class:`SpinConfig1D`
+        conf  : :class:`BitString`
             Returns updated config
         """
-
-        for site_i in range(conf.N):
-       
-            # new_conf, delta_e = ham.delta_e_for_flip(site_i, conf)      
-            delta_e = 0.0
         
-            # assume PBC
-            iright = (site_i+1)%conf.N
-            ileft  = (site_i-1)%conf.N
-            if conf.config[ileft] == conf.config[iright]:
-                if conf.config[ileft] == conf.config[site_i]:
-                    delta_e = 4.0*self.J
-                else:
-                    delta_e = -4.0*self.J
-                
-            delta_e += 2*self.mu * (2*conf.config[site_i]-1)
+        #print(self.mu)
+        #error('here')
+        for site_i in range(conf.N):
+     
+            #print(type(self.nodes[site_i]))
+            #print(type(self.js[site_i]))
+            #print(type(self.mu))
+            #error('here')
+
+            delta_e = delta_e_for_flip_fast(site_i, conf.config, 
+                                            self.nodes[site_i], 
+                                            self.js[site_i], 
+                                            self.mu)      
+            #delta_e = self.delta_e_for_flip(site_i, conf)      
 
             # prob_trans = 1.0 # probability of transitioning
             accept = True
@@ -172,7 +211,7 @@ class IsingHamiltonian1D:
 
         Parameters
         ----------
-        conf   : :class:`SpinConfig1D`
+        conf   : :class:`BitString`
             input configuration 
         T      : int
             Temperature
@@ -213,3 +252,47 @@ class IsingHamiltonian1D:
         HC = (EE - E*E)/(T*T)
         MS = (MM - M*M)/T
         return E, M, HC, MS
+
+
+if __name__ == "__main__":
+    N=10
+    conf = montecarlo.BitString(N=N)
+    random.seed(3)
+    conf.initialize(M=4)
+    print(conf)
+
+    Jval = 1.0
+    muval = 0.2
+
+    J = []
+    mu = []
+    for i in range(N):
+        J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
+    
+    for i in range(N):
+        mu.append(muval)
+
+    for i in J:
+        print(i)
+    
+    ham = IsingHamiltonianND(J = J, mu = mu)
+    ham1d = montecarlo.IsingHamiltonian1D(J = -Jval, mu = muval)
+    
+    print(ham.energy(conf))
+    print(ham1d.energy(conf))
+    print()
+    tmp = cp.deepcopy(conf)
+    tmp.flip_site(0)
+    print(tmp)
+    print(ham.energy(tmp))
+    print(ham1d.energy(tmp))
+    print()
+    print(ham.energy(tmp) - ham.energy(conf))
+    print(ham1d.energy(tmp) - ham1d.energy(conf))
+    print(ham.delta_e_for_flip(0,conf)[1])
+    #print(ham1d.delta_e_for_flip(0,conf)[1])
+    assert(abs(ham.energy(conf) - ham1d.energy(conf)) < 1e-9)
+    assert(abs(ham.delta_e_for_flip_slow(0,conf)[1] - ham.delta_e_for_flip(0,conf)[1]) < 1e-9)
+
+    print(ham.compute_average_values(conf,1.0))
+    print(ham1d.compute_average_values(conf,1.0))

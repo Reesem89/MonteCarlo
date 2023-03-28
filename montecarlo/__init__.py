@@ -6,9 +6,9 @@ Introduction to the Monte Carlo method
 # Add imports here
 from .montecarlo import *
 from .metropolis import *
-from .spin_config import *
+from .bitstring import *
 from .ising_hamiltonian import *
-from .ising_hamiltonian_nd import *
+from .ising_hamiltonian_1d import *
 
 
 # Handle versioneer

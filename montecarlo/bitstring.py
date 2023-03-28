@@ -3,16 +3,8 @@ from numpy.testing import assert_almost_equal
 import random
 import copy as cp
 
-class SpinConfig:
-    """
-    Base class for different types of spin configurations (i.e., 1D, 2D, etc)
-    """
-    def __init__(self):
-        print(" Why are you instantiating this?\n")
 
-
-
-class SpinConfig1D(SpinConfig):
+class BitString:
     """
     1-D spin configuration
     """

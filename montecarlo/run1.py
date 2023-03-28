@@ -7,7 +7,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 random.seed(2)
-conf = montecarlo.SpinConfig1D(N=10)
+conf = montecarlo.BitString(N=10)
 conf.initialize(M=5)
 ham = montecarlo.IsingHamiltonian1D(-1.0, [.1 for i in range(10)], .01)
 
