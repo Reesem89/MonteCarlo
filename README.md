@@ -8,9 +8,6 @@ MonteCarlo
 
 # Introduction to the Monte Carlo method
 
-Start by defining the Gibbs distribution:
-$$P(\alpha) = e^{-E(\alpha)/kT}$$
-this 
 
 ### Copyright
 
