@@ -52,7 +52,7 @@ def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
 
 if __name__ == "__main__":
     N=40
-    conf = montecarlo.SpinConfig1D(N=N)
+    conf = montecarlo.BitString(N=N)
     conf.initialize(M=20)
     ham = montecarlo.IsingHamiltonian1D(J=-1.0, mu=0.1)
     
