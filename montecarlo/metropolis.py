@@ -32,11 +32,13 @@ def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
         Ei = ham.energy(conf)
         Mi = conf.get_magnetization()
         
-        #E_samples[si]  = Ei 
+        # E_samples[si]  = Ei 
+        # EE_samples[si]  = Ei*Ei
         E_samples[si]  = (E_samples[si-1]*(si) + Ei)/(si+1)
         EE_samples[si] = (EE_samples[si-1]*(si) + Ei*Ei)/(si+1)
         
-        #M_samples[si]  = Mi 
+        # M_samples[si]  = Mi 
+        # MM_samples[si]  = Mi*Mi
         M_samples[si]  = (M_samples[si-1]*(si) + Mi)/(si+1)
         MM_samples[si] = (MM_samples[si-1]*(si) + Mi*Mi)/(si+1)
     
