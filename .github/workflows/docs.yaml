@@ -22,7 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme
+          conda install sphinx sphinx_rtd_theme
+          conda list
       - name: Sphinx build
         run: |
           cd docs
