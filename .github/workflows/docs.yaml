@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        ref: gh-pages
+        run: | 
+          git merge main
 
     - uses: conda-incubator/setup-miniconda@v2
       with:
@@ -49,7 +53,6 @@ jobs:
       shell: bash -l {0}
 
       run: |
-        git checkout gh-pages
         ls -al
         cd docs
         ls -al
