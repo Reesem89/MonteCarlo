@@ -40,11 +40,14 @@ jobs:
         conda list
 
     - name: Install Sphinx dependencies
+      shell: bash -l {0}
       run: |
         conda install sphinx sphinx_rtd_theme
         conda list
 
     - name: Sphinx build
+      shell: bash -l {0}
+
       run: |
         ls -al
         cd docs
