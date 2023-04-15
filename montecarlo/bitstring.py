@@ -6,7 +6,7 @@ import copy as cp
 
 class BitString:
     """
-    1-D spin configuration
+    Bit string for encoding a spin configuration
     """
     def __init__(self, N=10, pbc=True):
         """

@@ -6,6 +6,12 @@ dependencies:
     # Base depends
   - python
   - pip
+    
+    # Package dependencies
+  - numpy
+  - matplotlib
+  - bitstring
+  - numba
 
     # Testing
   - pytest
