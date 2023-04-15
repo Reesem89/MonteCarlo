@@ -7,7 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          environment-file: devtools/conda-envs/test_env.yaml
+
+          channels: conda-forge,defaults
+
+          activate-environment: test
+          auto-update-conda: false
+          auto-activate-base: false
+          show-channel-urls: true
+
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_rtd_theme
