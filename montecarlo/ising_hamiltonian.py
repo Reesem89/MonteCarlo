@@ -10,17 +10,23 @@ from operator import itemgetter
 
 @jit(nopython=True)
 def delta_e_for_flip_fast(i, config, nodes, J, mu):
-    """Compute the energy change incurred if one were to flip the spin at site i
-
+    """
     Parameters
     ----------
     i        : int
         Index of site to flip
-    config   : list of 0's and 1's 
+    config   : list
+        list of 0's and 1's 
+    nodes    : [[]]]
+        for each node, list of nodes connected
+    J        : [[]]
+        for each node, list of J couplings to connected nodes
+    mu       : list
+        for each node, strength of local field, mu
     
     Returns
     -------
-    energy  : float
+    del_e  : float
         Returns the energy change
     """
     
@@ -34,8 +40,6 @@ def delta_e_for_flip_fast(i, config, nodes, J, mu):
 
     del_e += mu[i] * del_si 
     return del_e
-
-
 
 
 class IsingHamiltonian:
@@ -155,6 +159,7 @@ class IsingHamiltonian:
         config_trial.flip_site(i)
         
         return self.energy(config_trial) - self.energy(config)
+
 
 
         

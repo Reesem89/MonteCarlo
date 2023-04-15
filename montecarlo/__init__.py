@@ -8,7 +8,7 @@ from .montecarlo import *
 from .metropolis import *
 from .bitstring import *
 from .ising_hamiltonian import *
-from .ising_hamiltonian_1d import *
+# from .ising_hamiltonian_1d import *
 
 
 # Handle versioneer

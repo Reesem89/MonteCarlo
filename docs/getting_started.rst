@@ -128,7 +128,7 @@ Examples
 -----------
 Configuration Energy
 ````````````````````
-Example for how to compute the energy for a single spin  configuration
+Example for how to compute the energy for a single spin configuration for a 1D (nearest neighbor graph)
 ::
 
     import numpy as np
@@ -137,10 +137,20 @@ Example for how to compute the energy for a single spin  configuration
     import montecarlo
     import random
     
+    # Define number of sites
+    N = 8
+
     # Define configuration
-    conf = montecarlo.SpinConfig1D(N=8)
+    conf = montecarlo.BitString(N=N)
     conf.set_config([0, 0, 0, 0, 0, 0, 1, 1])
-    ham = montecarlo.IsingHamiltonian1D(-1.0, .1)
+
+    # Choose a J-coupling constant, `Jval`:
+    Jval = 1.0
+    mu = [.1 for i in range(N)]
+    J = []
+    for i in range(N):
+        J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
+    ham = montecarlo.IsingHamiltonian(J=J, mu=mu)
         
     Ei = ham.energy(conf)
     print(" Energy of      ", conf.config, " is ", Ei)
@@ -162,31 +172,35 @@ This should print out the following:
 
 Thermodynamic for temp T
 ``````````````````````````
-Here, we compute the average energy, magnetization, magnetic susceptability, and heat capacity for a small 6 site lattice.
+Here, we compute the average energy, magnetization, magnetic susceptability, and heat capacity for a small 6 site lattice. 
 ::
 
-    import numpy as np
-    import matplotlib as mpl
-    from matplotlib import pyplot as plt
-    import montecarlo
-    import random
-    
-    # Define my hamiltonian values
-    ham.J = -2   
-    ham.mu = 1.1 
-    ham.pbc = True
-    
-    # Define a new configuration instance for a 6-site lattice
-    conf = montecarlo.SpinConfig1D(N=6)
-    
-    # Compute the average values for Temperature = 1
-    E, M, HC, MS = ham.compute_average_values(conf, 1)
-    
-    
-    print(" E  = %12.8f" %E)
-    print(" M  = %12.8f" %M)
-    print(" HC = %12.8f" %HC)
-    print(" MS = %12.8f" %MS)
+        import numpy as np
+        import matplotlib as mpl
+        from matplotlib import pyplot as plt
+        import montecarlo
+        import random
+
+        # Define my hamiltonian values
+        N = 6
+        Jval = 2
+        mu = [1.1 for i in range(N)]
+        J = []
+        for i in range(N):
+                J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
+        ham = montecarlo.IsingHamiltonian(J=J, mu=mu)
+
+        # Define a new configuration instance for a 6-site lattice
+        conf = montecarlo.BitString(N=N)
+
+        # Compute the average values for Temperature = 1
+        E, M, HC, MS = ham.compute_average_values(conf, 1)
+
+
+        print(" E  = %12.8f" %E)
+        print(" M  = %12.8f" %M)
+        print(" HC = %12.8f" %HC)
+        print(" MS = %12.8f" %MS)
     
 This should produce the following output:
 ::
@@ -203,35 +217,42 @@ One is often interested in how these properties change as a function of Temperat
 ::
 
         # First initialize some empty lists to store our computed quantites
-	e_list = []
-	e2_list = []
-	m_list = []
-	m2_list = []
-	T_list = []
+        e_list = []
+        e2_list = []
+        m_list = []
+        m2_list = []
+        T_list = []
 
-        # Now pick some values for our hamiltonian        
-	ham.J = -1
-	ham.mu = .1
-	
-	conf = montecarlo.SpinConfig1D(N=8)
-	
-	for Ti in range(1,100):
-	    T = .1*Ti
-	
-	    E, M, HC, MS = ham.compute_average_values(conf, T)
-	
-	    e_list.append(E)
-	    m_list.append(M)
-	    e2_list.append(HC)
-	    m2_list.append(MS)
-	    T_list.append(T)
-	
-	
-	plt.plot(T_list, e_list, label="energy");
-	plt.plot(T_list, m_list, label="magnetization");
-	plt.plot(T_list, m2_list, label="Susceptibility");
-	plt.plot(T_list, e2_list, label="Heat Capacity");
-	plt.legend();
+        # Now pick some new values for our hamiltonian
+        N = 8
+        Jval = 1
+        mu = [.1 for i in range(N)]
+        J = []
+        for i in range(N):
+                J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
+        ham = montecarlo.IsingHamiltonian(J=J, mu=mu)
+
+        conf = montecarlo.BitString(N=N)
+
+        for Ti in range(1,100):
+                T = .1*Ti
+
+                E, M, HC, MS = ham.compute_average_values(conf, T)
+
+                e_list.append(E)
+                m_list.append(M)
+                e2_list.append(HC)
+                m2_list.append(MS)
+                T_list.append(T)
+
+
+        print(e_list)
+        plt.plot(T_list, e_list, label="energy");
+        plt.plot(T_list, m_list, label="magnetization");
+        plt.plot(T_list, m2_list, label="Susceptibility");
+        plt.plot(T_list, e2_list, label="Heat Capacity");
+        plt.legend();
+        plt.savefig('prop_vs_T.pdf')
 
 This should produce the following plot:
 
