@@ -6,33 +6,55 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          environment-file: devtools/conda-envs/test_env.yaml
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: 3.9
+        environment-file: devtools/conda-envs/test_env.yaml
 
-          channels: conda-forge,defaults
+        channels: conda-forge,defaults
 
-          activate-environment: test
-          auto-update-conda: false
-          auto-activate-base: false
-          show-channel-urls: true
+        activate-environment: test
+        auto-update-conda: false
+        auto-activate-base: false
+        show-channel-urls: true
+    
+    - name: Additional info about the build
+      shell: bash
+      run: |
+        uname -a
+        df -h
+        ulimit -a
 
-      - name: Install dependencies
-        run: |
-          conda install sphinx sphinx_rtd_theme
-          conda list
-      - name: Sphinx build
-        run: |
-          cd docs
-          make html 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        with:
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
-          force_orphan: true
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    
+    - name: Install package
+      # conda setup requires this special shell
+      shell: bash -l {0}
+      run: |
+        python -m pip install . --no-deps
+        conda list
+
+    - name: Install Sphinx dependencies
+      run: |
+        conda install sphinx sphinx_rtd_theme
+        conda list
+
+    - name: Sphinx build
+      run: |
+        ls -al
+        cd docs
+        ls -al
+        make html 
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      with:
+        publish_branch: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: _build/
+        force_orphan: true
