@@ -49,15 +49,20 @@ jobs:
       shell: bash -l {0}
 
       run: |
+        git checkout gh-pages
         ls -al
         cd docs
         ls -al
         make html 
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-      with:
-        publish_branch: gh-pages
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: _build/
-        force_orphan: true
+        git add _build
+        git commit -m 'docs'
+        git push 
+        
+    # - name: Deploy
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    #   with:
+    #     publish_branch: gh-pages
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: _build/
+    #     force_orphan: true
