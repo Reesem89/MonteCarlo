@@ -82,7 +82,7 @@ jobs:
       shell: bash -l {0}
 
       run: |
-        pytest -v --cov=molecool --cov-report=xml --color=yes molecool/tests/
+        pytest -v --cov=montecarlo --cov-report=xml --color=yes montecarlo/tests/
     
     # - name: Run tests
     #   shell: bash
