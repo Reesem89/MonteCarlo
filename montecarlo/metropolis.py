@@ -52,52 +52,52 @@ def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
     return E_samples, M_samples, EE_samples, MM_samples
 
 
-if __name__ == "__main__":
-    N=40
-    conf = montecarlo.BitString(N=N)
-    conf.initialize(M=20)
-    ham = montecarlo.IsingHamiltonian1D(J=-1.0, mu=0.1)
+# if __name__ == "__main__":
+#     N=40
+#     conf = montecarlo.BitString(N=N)
+#     conf.initialize(M=20)
+#     ham = montecarlo.IsingHamiltonian1D(J=-1.0, mu=0.1)
     
-    random.seed(3)
+#     random.seed(3)
     
-    eavg = []
-    e_vs_T = []
-    m_vs_T = []
-    ee_vs_T = []
-    mm_vs_T = []
-    heat_cap_vs_T = []
-    magn_sus_vs_T = []
-    T_range = []
-    for Ti in range(1,50):
-        T = .1*Ti
-        e, m, ee, mm = metropolis_montecarlo(ham, cp.deepcopy(conf), T=T, nsweep=40000, nburn=2000)
-        T_range.append(T)
-        e_vs_T.append(e[-1])
-        m_vs_T.append(m[-1])
-        ee_vs_T.append(ee[-1])
-        mm_vs_T.append(mm[-1])
-        #print(e)
+#     eavg = []
+#     e_vs_T = []
+#     m_vs_T = []
+#     ee_vs_T = []
+#     mm_vs_T = []
+#     heat_cap_vs_T = []
+#     magn_sus_vs_T = []
+#     T_range = []
+#     for Ti in range(1,50):
+#         T = .1*Ti
+#         e, m, ee, mm = metropolis_montecarlo(ham, cp.deepcopy(conf), T=T, nsweep=40000, nburn=2000)
+#         T_range.append(T)
+#         e_vs_T.append(e[-1])
+#         m_vs_T.append(m[-1])
+#         ee_vs_T.append(ee[-1])
+#         mm_vs_T.append(mm[-1])
+#         #print(e)
     
-        #plt.plot(e)
-        #plt.plot(m)
+#         #plt.plot(e)
+#         #plt.plot(m)
     
-        E  = e[-1]
-        EE = ee[-1]
-        M  = m[-1]
-        MM = mm[-1]
+#         E  = e[-1]
+#         EE = ee[-1]
+#         M  = m[-1]
+#         MM = mm[-1]
     
-        heat_cap = (EE-E*E)/(T*T)
-        magn_sus = (MM-M*M)/T
-        heat_cap_vs_T.append(heat_cap)
-        magn_sus_vs_T.append(magn_sus)
+#         heat_cap = (EE-E*E)/(T*T)
+#         magn_sus = (MM-M*M)/T
+#         heat_cap_vs_T.append(heat_cap)
+#         magn_sus_vs_T.append(magn_sus)
     
-        print("T= %12.8f E= %12.8f M=%12.8f Heat Capacity= %12.8f Mag. Suscept.=%12.8f" %(T, e[-1], m[-1], heat_cap, magn_sus))
-    plt.plot(T_range,e_vs_T, label="Energy")
-    plt.plot(T_range,m_vs_T, label="Magnetization")
-    plt.plot(T_range,magn_sus_vs_T, label="Susceptibility")
-    plt.plot(T_range,heat_cap_vs_T, label="Heat Capacity")
-    plt.legend()
+#         print("T= %12.8f E= %12.8f M=%12.8f Heat Capacity= %12.8f Mag. Suscept.=%12.8f" %(T, e[-1], m[-1], heat_cap, magn_sus))
+#     plt.plot(T_range,e_vs_T, label="Energy")
+#     plt.plot(T_range,m_vs_T, label="Magnetization")
+#     plt.plot(T_range,magn_sus_vs_T, label="Susceptibility")
+#     plt.plot(T_range,heat_cap_vs_T, label="Heat Capacity")
+#     plt.legend()
     
-    #print(" %12.8f"%(np.dot(Eseries,Zseries)/sum(Zseries)))
-    plt.savefig('test.pdf')
+#     #print(" %12.8f"%(np.dot(Eseries,Zseries)/sum(Zseries)))
+#     plt.savefig('test.pdf')
     
