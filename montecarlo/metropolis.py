@@ -3,6 +3,27 @@ import copy as cp
 
 
 def metropolis_montecarlo(ham, conf, T=1, nsweep=1000, nburn=100):
+    """Run montecarlo with metropolis sampling for the Hamiltonian
+
+    Parameters
+    ----------
+    ham: IsingHamiltonian, required 
+    conf: BitString, required
+        configuration - probably not needed 
+    T: float, optional
+        Temperature 
+
+    Returns
+    E_samples: np.array
+        Running average of the energy samples collected
+    M_samples: np.array
+        Running average of the magnetization samples collected
+    EE_samples: np.array
+        Running average of the energy^2 samples collected
+    MM_samples: np.array
+        Running average of the magnetization^2 samples collected
+    -------
+    """
     E_samples = np.zeros(nsweep)
     M_samples = np.zeros(nsweep)
     EE_samples = np.zeros(nsweep)
