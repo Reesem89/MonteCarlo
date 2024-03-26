@@ -8,7 +8,7 @@ class BitString:
     """
     Bit string for encoding a spin configuration
     """
-    def __init__(self, N=10, pbc=True):
+    def __init__(self, N):
         """
         Initialize instance
 
@@ -22,9 +22,8 @@ class BitString:
         Returns
         -------
         """    
-        self.config = np.zeros(N, dtype=int)
         self.N = N
-        self.pbc = pbc
+        self.config = np.zeros(N, dtype=int) 
         self.n_dim = 2**self.N
 
     def __repr__(self):
@@ -47,7 +46,9 @@ class BitString:
         randomlist = random.sample(range(0, self.N), M)
         for i in randomlist:
             self.config[i] = 1
-
+    
+    def __len__(self):
+        return len(self.config)
 
     def __getitem__(self,i):
         return self.config[i]

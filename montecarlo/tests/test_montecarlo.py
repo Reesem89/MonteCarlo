@@ -20,7 +20,7 @@ def testa():
 
 def test_average_values():
     N=10
-    conf = montecarlo.BitString(N=N)
+    conf = montecarlo.BitString(N)
     #conf.initialize(M=20)
 
     T = 2.0
@@ -33,7 +33,7 @@ def test_average_values():
     for i in range(N):
         J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
     ham2 = montecarlo.IsingHamiltonian(J=J, mu=mu)
-    E, M, HC, MS = ham2.compute_average_values(conf, T) 
+    E, M, HC, MS = ham2.compute_average_values(T) 
  
     assert(np.isclose(E, -4.6378514858094695))
     assert(np.isclose(M, -0.1838233606011354 ))
@@ -44,7 +44,7 @@ def test_average_values():
 def test_metropolis():
     random.seed(2)
     N=20
-    conf = montecarlo.BitString(N=N)
+    conf = montecarlo.BitString(N)
     T = 2
 
     J = []

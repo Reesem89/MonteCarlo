@@ -1,11 +1,9 @@
 from numba import jit
 
 import numpy as np
-from numpy.testing import assert_almost_equal
 import random
 import copy as cp
 import montecarlo 
-from operator import itemgetter
 
 
 @jit(nopython=True)
@@ -75,6 +73,7 @@ class IsingHamiltonian:
                 self.nodes[i][jidx] = j[0]
                 self.js[i][jidx] = j[1]
         self.mu = np.array([i for i in self.mu])
+        self.N = len(self.J)
 
     def energy(self, config):
         """Compute energy of configuration, `config` 
@@ -211,7 +210,7 @@ class IsingHamiltonian:
         return conf
 
     
-    def compute_average_values(self, conf, T):
+    def compute_average_values(self, T):
         """ Compute Average values exactly
 
         Parameters
@@ -237,6 +236,8 @@ class IsingHamiltonian:
         Z  = 0.0
         EE = 0.0
         MM = 0.0
+
+        conf = montecarlo.BitString(self.N)
 
         for i in range(conf.n_dim):
             conf.set_int_config(i)
