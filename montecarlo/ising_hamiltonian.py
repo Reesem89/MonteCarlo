@@ -210,8 +210,6 @@ class IsingHamiltonian:
 
         Parameters
         ----------
-        conf   : :class:`BitString`
-            input configuration
         T      : int
             Temperature
 
