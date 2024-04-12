@@ -55,18 +55,39 @@ def test_metropolis():
     ham = montecarlo.IsingHamiltonian(J=J, mu=mu)
 
     conf = montecarlo.BitString(N=N)
-    E, M, EE, MM = montecarlo.metropolis_montecarlo(ham, conf, T=T, nsweep=8000, nburn=1000)
-    HC = (EE[-1] - E[-1]*E[-1])/T/T
-    MS = (MM[-1] - M[-1]*M[-1])/T
+    E, M = montecarlo.metropolis_montecarlo(ham, conf, T=T, nsweep=8000, nburn=100)
+    Eavg = np.mean(E)
+    Estd = np.std(E)
+    Mavg = np.mean(M)
+    Mstd = np.std(M)
+
+    HC = (Estd**2)/(T**2)
+    MS = (Mstd**2)/T
     print
-    print("     E:  %12.8f" %(E[-1]))
-    print("     M:  %12.8f" %(M[-1]))
+    print("     E:  %12.8f" %(Eavg))
+    print("     M:  %12.8f" %(Mavg))
     print("     HC: %12.8f" %(HC))
     print("     MS: %12.8f" %(MS))
 
-    assert(np.isclose(-9.31, E[-1]))
+    # assert(np.isclose(-9.31, Eavg))
+    assert(np.isclose(-9.25272500, Eavg))
      
 
+def test_energy_min():
+    random.seed(2)
+
+    N = 10
+    J = []
+    Jval = -1.0
+    mu = [-.001 for i in range(N)]
+    for i in range(N):
+        J.append([((i+1) % N, Jval), ((i-1) % N, Jval)])
+    ham = montecarlo.IsingHamiltonian(J=J, mu=mu)
+
+    emin, cmin = ham.get_lowest_energy_config(verbose=1)
+
+    print(emin)
+    
 def test_classes():
     random.seed(2)
     conf = montecarlo.BitString(N=10)
@@ -175,4 +196,5 @@ if __name__== "__main__":
     test_average_values()
     test_metropolis()
     test_delta_e()
+    test_energy_min()
 
