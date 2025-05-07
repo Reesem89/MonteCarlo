@@ -108,7 +108,7 @@ class IsingHamiltonian:
             # print()
             # print(i)
             for j in self.J[i]:
-                if j[0] < i:
+                if j < i:
                     continue
                 # print(j)
                 if config[i] == config[j[0]]:
